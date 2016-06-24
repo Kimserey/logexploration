@@ -28,11 +28,7 @@ let df =
           Level = s.GetAs<string>("Level")
           Source = s.GetAs<string>("Source") 
           Text = s.GetAs<string>("Text")
-          Instance = 
-            match s.GetAs<string>("Instance") with
-            | "bron" -> "Instance-1"
-            | "rct-live" -> "Instance-2"
-            | _ -> "Instance-3" })
+          Instance = s.GetAs<string>("Instance") })
     |> Frame.ofRecords
 
 type Data = {
