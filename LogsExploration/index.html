@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logs</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+</head>
+<body>
+    <script>
+        function makeChart(endpoint, title) {
+            $.getJSON('http://127.0.0.1:8083/' + endpoint, function (result) {
+                $('<div style="width:100%;">').highcharts({
+                    chart: {
+                        type: 'spline',
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: title
+                    },
+                    xAxis: {
+                        categories: result[0].counts.map(function (e) { return e.date; })
+                    },
+                    yAxis: {
+                        title: {
+                            text: "Count"
+                        }
+                    },
+                    plotOptions: {
+                        spline: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    legend: {
+                        align: 'right',
+                        x: -30,
+                        verticalAlign: 'top',
+                        y: 25,
+                        floating: true,
+                        borderColor: '#CCC',
+                        borderWidth: 1,
+                        shadow: false
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: {point.y}'
+                    },
+                    series:
+                        result.map(function (e) {
+                            return {
+                                name: e.instance,
+                                data: e.counts.map(function (e) { return e.count; })
+                            };
+                        })
+                }).appendTo('body');
+            });
+        }
+        
+        makeChart('errors', 'Error per hours');
+        makeChart('mdrefreshes', 'MD refreshses per hours');
+    </script>
+</body>
+</html>
