@@ -5,13 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Logs</title>
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://rawgit.com/Kimserey/SimpleUI/master/dist/css/SimpleUI.css">
     <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        body {
+            margin-top: 3em;
+        }
+    </style>
 </head>
 <body>
     <script>
+        function makeCategories(result) {
+            function getDate(e) {
+                return e.date;
+            }
+            
+            console.log(result[0].counts.length);
+            console.log(result[1].counts.length);
+            console.log(result[2].counts.length);
+            return result[0].counts.map(getDate);
+        }
+
+        function display(log) {
+            return new Date(log.date).toTimeString()
+                + ' - ' + log.level
+                + ' - ' + log.source
+                + ' - ' + log.text;
+        }
+
+        function formatter(chart) {
+            return '<strong>'
+                        + chart.series.name + ': '
+                        + chart.x
+                        + ((chart.y > 0) ? " - " + chart.y : "")
+                    + '</strong>'
+                    + '<br/>'
+                    + chart.point.partialLogs.map(display).join('<br/>');
+        }
+
+        function makeSeries (s) {
+            function makePoint(p) {
+                return {
+                    y: p.count,
+                    partialLogs: p.partialLogs
+                };
+            }
+
+            return {
+                name: s.instance,
+                data: s.counts.map(makePoint)
+            };
+        }
+
         function makeChart(endpoint, title) {
             $.getJSON('http://127.0.0.1:8083/' + endpoint, function (result) {
-                $('<div style="width:100%;">').highcharts({
+                $('<div class="chart-card" style="width:90%;">').highcharts({
                     chart: {
                         type: 'spline',
                         zoomType: 'xy'
@@ -20,11 +68,11 @@
                         text: title
                     },
                     xAxis: {
-                        categories: result[0].counts.map(function (e) { return e.date; })
+                        categories: makeCategories(result)
                     },
                     yAxis: {
                         title: {
-                            text: "Count"
+                            text: 'Count'
                         }
                     },
                     plotOptions: {
@@ -45,21 +93,16 @@
                         shadow: false
                     },
                     tooltip: {
-                        pointFormat: '{series.name}: {point.y}'
+                        formatter: function () { return formatter(this); }
                     },
-                    series:
-                        result.map(function (e) {
-                            return {
-                                name: e.instance,
-                                data: e.counts.map(function (e) { return e.count; })
-                            };
-                        })
+                    series: result.map(makeSeries)
                 }).appendTo('body');
             });
         }
         
-        makeChart('errors', 'Error per hours');
         makeChart('mdrefreshes', 'MD refreshses per hours');
+        makeChart('compilefsx', 'Compile Fsx per hours');
+        makeChart('errors', 'Error per hours');
     </script>
 </body>
 </html>
