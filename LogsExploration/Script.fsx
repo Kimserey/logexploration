@@ -6,7 +6,7 @@ open System
 open System.IO
 
 Environment.CurrentDirectory <- __SOURCE_DIRECTORY__
-let csvPath = "../data"
+let csvPath = "data"
 
 type Log = {
     Date: DateTime

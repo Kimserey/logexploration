@@ -1,5 +1,6 @@
 source https://www.nuget.org/api/v2
 nuget Deedle
+nuget Fake
 nuget Newtonsoft.Json
 nuget Sqlite
 nuget Sqlite.Net-pcl
