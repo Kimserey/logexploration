@@ -19,7 +19,7 @@ type Log = {
 let df =
     Directory.GetFiles(csvPath, "*.csv")
     |> Seq.map (fun (path: string) -> Frame.ReadCsv(path, hasHeaders = false))
-    |> Seq.map (fun df -> df |> Frame.indexColsWith [ "Sequence"; "Date"; "Level"; "ThreadId"; "Source"; "Text"; "Exception"; "Instance" ])
+    |> Seq.map (fun df -> df |> Frame.indexColsWith [ "Date"; "Level"; "Source"; "Text"; "Exception"; "Instance" ])
     |> Seq.collect (fun df -> df |> Frame.rows |> Series.observations)
     |> Seq.map snd
     |> Seq.filter (fun s -> s.TryGetAs<DateTime>("Date").HasValue)
