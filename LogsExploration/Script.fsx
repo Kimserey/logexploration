@@ -22,7 +22,12 @@ let df =
     |> Seq.map (fun df -> df |> Frame.indexColsWith [ "Date"; "Level"; "Source"; "Text"; "Exception"; "Instance" ])
     |> Seq.collect (fun df -> df |> Frame.rows |> Series.observations)
     |> Seq.map snd
-    |> Seq.filter (fun s -> s.TryGetAs<DateTime>("Date").HasValue)
+    |> Seq.filter (fun s -> 
+        try
+            s.TryGetAs<DateTime>("Date").HasValue
+        with
+        | _ -> s.Print()
+               false)
     |> Seq.map (fun s ->
         { Date = s.GetAs<DateTime>("Date")
           Level = s.GetAs<string>("Level")

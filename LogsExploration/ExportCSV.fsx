@@ -22,16 +22,20 @@ Target "Export CSV" (fun _ ->
                 (fun (info: ProcessStartInfo) ->
                     info.FileName <- "../libs/sqlite3.exe"
                     info.Arguments <- 
-                        "../data/20160622/" + instance + "-logs.db.bak "
-                        + "\".mode csv\" " 
-                        + "\".output data/"+ instance + "-logs.csv\" "
-                        + "\"SELECT DATETIME(timestamp / 10000000 - 62135596800, 'unixepoch') AS timestamp, " 
-                            + "level,"
-                            + "source,"
-                            + "text,"
-                            + "exception,"
-                            + "'" + instance + "' "
-                        + "FROM logs ORDER BY id DESC;\"")
+                        "../data/20160622/" + instance + "-logs.db.bak"
+                        + " \".mode csv\"" 
+                        + " \".output data/"+ instance + "-logs.csv\""
+                        + " \"SELECT"
+                            + " id,"
+                            + " DATETIME(timestamp / 10000000 - 62135596800, 'unixepoch') AS date," 
+                            + " level,"
+                            + " source,"
+                            + " text,"
+                            + " exception,"
+                            + " '" + instance + "' "
+                        + " FROM logs"
+                        + " WHERE date NOT NULL"
+                        + " ORDER BY date ASC;\"")
                 (TimeSpan.FromMinutes 5.0)
 
         match exec() with
