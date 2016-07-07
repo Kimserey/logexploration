@@ -138,6 +138,7 @@ let compileFSX =  computeCount (fun c -> c.GetAs<string>("Text") = "Compiling FS
 #r "../packages/Newtonsoft.Json/lib/net40/Newtonsoft.Json.dll"
 
 open Suave
+open Suave.Files
 open Suave.Filters
 open Suave.Operators
 open Suave.Successful
@@ -155,6 +156,7 @@ let app =
     GET >=> choose
         [ path "/errors" >=> JSON errors
           path "/mdrefreshes" >=> JSON mdRefreshes
-          path "/compilefsx" >=> JSON compileFSX ]
+          path "/compilefsx" >=> JSON compileFSX
+          path "/" >=> file "index.html" ]
 
 startWebServer defaultConfig app
